@@ -1,0 +1,92 @@
+import java.util.*;
+import java.lang.Math;
+
+public class CARO_P1
+{
+	public static void main(String[] args) throws ArrayIndexOutOfBoundsException
+	{
+		boolean completeTour = false;
+		int tries = 1;
+
+		while(!bingo)
+		{
+			KnightTour knight = new KnightTour();
+			
+			knight.tour();
+
+			knight.displayBoard();
+
+			System.out.println("Current total of tries: " + tries);
+
+			if(knight.counterCall() == 64)
+				completeTour = true;
+
+			tries++;
+		}	
+	}
+
+	public class KnightTour
+	{
+		public static final Random mover = new Random();
+		public static final int[] valid = {-1, 1, -2, 2};
+
+		private int[][] chessBoard = new int[8][8];
+		private int posX = 0, posY = 0;
+		private int counter = 0, tracker = 0;
+
+		Knight()
+		{
+			randPosition();
+			tracker = 999999;
+			counter = 1;
+
+			for(int i = 0; i < 8; i++){
+				for(int j = 0; j < 8; j++){
+					chessBoard[i][j] = 0;
+				}
+			}
+		}
+
+		public void randPosition()
+		{
+			posX = mover.nextInt(8);
+			posY = mover.nextInt(8);
+		}
+
+		public void tour()
+		{
+			while(tracker >= 0 && counter <= 64){
+				int x = mover.nextInt(4);
+				int y = mover.nextInt(4);
+
+				if( posX + valid[x] < 8 && posY + valid[y] < 8              // checks if the new position is out of bounds
+					&& posX + valid[x] >= 0 && posY + valid[y] >= 0         // checks if the new position is out of bounds(again)
+					&& Math.abs(valid[x]) != Math.abs(valid[y])             // checks if the two values are not equal(bec. they shouldn't be)
+					&& chessBoard[posX + valid[x]][posY + valid[y]] == 0)   // if the position to move on was never visited yet
+				{
+						posX += valid[x];
+						posY += valid[y];
+						chessBoard[posX][posY] = counter;
+						counter++;
+				}
+				tracker--;
+			}
+		}
+
+		public void displayBoard()
+		{
+			for(int i = 0; i < 8; i++){
+				for(int j = 0; j < 8; j++){
+					System.out.printf("%2d  ", chessBoard[i][j]);
+				}
+				System.out.println();
+			}
+			System.out.printf("Number of moves: %d\n", counterCall());
+		}
+
+		public int counterCall()
+		{
+			return counter-1;
+		}
+	}
+}
